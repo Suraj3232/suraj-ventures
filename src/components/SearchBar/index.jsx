@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 
-export const SearchBar = ({ onSearch, placeholder = "Search by ingredient or benefit..." }) => {
-  const [searchTerm, setSearchTerm] = useState('');
+export const SearchBar = ({ onSearch, placeholder = "Search by ingredient or benefit...", initialValue = '' }) => {
+  const [searchTerm, setSearchTerm] = useState(initialValue);
+
+  // Sync when initialValue changes (e.g. from URL param)
+  React.useEffect(() => {
+    setSearchTerm(initialValue);
+  }, [initialValue]);
 
   const handleChange = (e) => {
     const value = e.target.value;

@@ -5,35 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { db } from '../../firebase/config';
 import { doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 
-// Category → gradient + icon mapping
-const CATEGORY_STYLES = {
-  'Cosmetics & Personal Care': {
-    gradient: 'from-pink-400 via-rose-400 to-pink-500',
-    icon: '🧴',
-    label: 'Personal Care',
-  },
-  'Food Products': {
-    gradient: 'from-emerald-400 via-green-400 to-teal-500',
-    icon: '🍃',
-    label: 'Food',
-  },
-  'Nutrition & Wellness': {
-    gradient: 'from-blue-400 via-cyan-400 to-blue-500',
-    icon: '💊',
-    label: 'Nutrition',
-  },
-  'Health & Wellness': {
-    gradient: 'from-teal-400 via-emerald-400 to-green-500',
-    icon: '🌿',
-    label: 'Wellness',
-  },
-};
-
-const DEFAULT_STYLE = {
-  gradient: 'from-emerald-400 via-emerald-500 to-green-600',
-  icon: '✨',
-  label: 'Product',
-};
+import { CATEGORY_STYLES, DEFAULT_STYLE } from '../../utils/categoryStyles';
 
 export const ProductCard = ({ product, isSaved = false }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -78,7 +50,7 @@ export const ProductCard = ({ product, isSaved = false }) => {
       className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
     >
       {/* Feature Header — no image, category-driven gradient */}
-      <div className={`relative h-48 bg-gradient-to-br ${style.gradient} flex flex-col items-center justify-center gap-2`}>
+      <div className={`relative h-48 bg-gradient-to-br ${style.cardGradient} flex flex-col items-center justify-center gap-2`}>
         {/* Large category icon */}
         <span className="text-5xl drop-shadow-sm select-none">{style.icon}</span>
         <span className="text-white/90 text-xs font-semibold uppercase tracking-widest">
@@ -121,13 +93,13 @@ export const ProductCard = ({ product, isSaved = false }) => {
         <div className="mb-3">
           <p className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Ingredients</p>
           <div className="flex flex-wrap gap-1">
-            {product.ingredients.slice(0, 2).map((ing) => (
+            {(product.ingredients || []).slice(0, 2).map((ing) => (
               <span key={ing} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
                 {ing}
               </span>
             ))}
-            {product.ingredients.length > 2 && (
-              <span className="text-xs text-gray-400">+{product.ingredients.length - 2}</span>
+            {(product.ingredients || []).length > 2 && (
+              <span className="text-xs text-gray-400">+{(product.ingredients || []).length - 2}</span>
             )}
           </div>
         </div>
@@ -136,13 +108,13 @@ export const ProductCard = ({ product, isSaved = false }) => {
         <div className="mb-4">
           <p className="text-xs font-semibold text-slate-500 mb-1 uppercase tracking-wide">Features</p>
           <div className="flex flex-wrap gap-1">
-            {product.features.slice(0, 2).map((feat) => (
+            {(product.features || []).slice(0, 2).map((feat) => (
               <span key={feat} className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full">
                 ✓ {feat}
               </span>
             ))}
-            {product.features.length > 2 && (
-              <span className="text-xs text-gray-400">+{product.features.length - 2}</span>
+            {(product.features || []).length > 2 && (
+              <span className="text-xs text-gray-400">+{(product.features || []).length - 2}</span>
             )}
           </div>
         </div>

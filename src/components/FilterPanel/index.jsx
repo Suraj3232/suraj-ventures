@@ -1,8 +1,26 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
-import { allIngredients, allFeatures, allBenefits } from '../../data/products';
 
-export const FilterPanel = ({ onFilterChange, selectedFilters = {} }) => {
+/**
+ * FilterPanel — sidebar filter component for the Products page.
+ *
+ * Props:
+ *   onFilterChange    — callback(updatedFilters)
+ *   selectedFilters   — current filter state { ingredients[], features[], benefits[] }
+ *   ingredientOptions — dynamic list derived from live Firestore products
+ *   featureOptions    — dynamic list derived from live Firestore products
+ *   benefitOptions    — dynamic list derived from live Firestore products
+ *
+ * All filter options are generated dynamically from the Firestore product catalogue
+ * so that newly added products automatically appear in the filter lists.
+ */
+export const FilterPanel = ({
+  onFilterChange,
+  selectedFilters = {},
+  ingredientOptions = [],
+  featureOptions = [],
+  benefitOptions = [],
+}) => {
   const [expandedSections, setExpandedSections] = React.useState({
     ingredients: true,
     features: true,
@@ -10,25 +28,21 @@ export const FilterPanel = ({ onFilterChange, selectedFilters = {} }) => {
   });
 
   const toggleSection = (section) => {
-    setExpandedSections(prev => ({
+    setExpandedSections((prev) => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
   };
 
   const handleFilterChange = (filterType, value) => {
     const current = selectedFilters[filterType] || [];
-    let updated;
-
-    if (current.includes(value)) {
-      updated = current.filter(item => item !== value);
-    } else {
-      updated = [...current, value];
-    }
+    const updated = current.includes(value)
+      ? current.filter((item) => item !== value)
+      : [...current, value];
 
     onFilterChange({
       ...selectedFilters,
-      [filterType]: updated
+      [filterType]: updated,
     });
   };
 
@@ -47,17 +61,21 @@ export const FilterPanel = ({ onFilterChange, selectedFilters = {} }) => {
 
       {expandedSections[type] && (
         <div className="px-4 pb-3 space-y-2">
-          {items.map(item => (
-            <label key={item} className="flex items-center gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={(selectedFilters[type] || []).includes(item)}
-                onChange={() => handleFilterChange(type, item)}
-                className="w-4 h-4 text-emerald-600 rounded"
-              />
-              <span className="text-sm text-slate-700">{item}</span>
-            </label>
-          ))}
+          {items.length === 0 ? (
+            <p className="text-sm text-slate-400 italic">No options available</p>
+          ) : (
+            items.map((item) => (
+              <label key={item} className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={(selectedFilters[type] || []).includes(item)}
+                  onChange={() => handleFilterChange(type, item)}
+                  className="w-4 h-4 text-emerald-600 rounded"
+                />
+                <span className="text-sm text-slate-700">{item}</span>
+              </label>
+            ))
+          )}
         </div>
       )}
     </div>
@@ -69,12 +87,12 @@ export const FilterPanel = ({ onFilterChange, selectedFilters = {} }) => {
         <h2 className="text-lg font-bold text-slate-800">Filters</h2>
       </div>
 
-      <FilterSection title="Ingredients" type="ingredients" items={allIngredients} />
-      <FilterSection title="Features" type="features" items={allFeatures} />
-      <FilterSection title="Benefits" type="benefits" items={allBenefits} />
+      <FilterSection title="Ingredients" type="ingredients" items={ingredientOptions} />
+      <FilterSection title="Features"    type="features"    items={featureOptions}    />
+      <FilterSection title="Benefits"    type="benefits"    items={benefitOptions}    />
 
       {/* Clear Filters Button */}
-      {Object.values(selectedFilters).some(arr => arr && arr.length > 0) && (
+      {Object.values(selectedFilters).some((arr) => arr && arr.length > 0) && (
         <div className="p-4">
           <button
             onClick={() => onFilterChange({})}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Mail, Phone } from 'lucide-react';
+import { categories } from '../../utils/constants';
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -54,26 +55,19 @@ export const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Categories</h3>
             <ul className="space-y-2">
-              <li>
-                <a href="/products?category=Cosmetics" className="text-gray-400 hover:text-emerald-400 transition">
-                  Cosmetics & Care
-                </a>
-              </li>
-              <li>
-                <a href="/products?category=Food" className="text-gray-400 hover:text-emerald-400 transition">
-                  Food Products
-                </a>
-              </li>
-              <li>
-                <a href="/products?category=Nutrition" className="text-gray-400 hover:text-emerald-400 transition">
-                  Nutrition & Wellness
-                </a>
-              </li>
-              <li>
-                <a href="/products?category=Health" className="text-gray-400 hover:text-emerald-400 transition">
-                  Health & Wellness
-                </a>
-              </li>
+              {categories.map((category) => (
+                <li key={category.id}>
+                  <Link
+                    to={`/products?category=${encodeURIComponent(category.name)}`}
+                    className="group inline-flex items-center text-gray-400 hover:text-emerald-400 transition-colors duration-300 cursor-pointer"
+                  >
+                    <span className="relative">
+                      {category.name}
+                      <span className="absolute -bottom-0.5 left-0 w-full h-[1px] bg-emerald-400 transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300"></span>
+                    </span>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 

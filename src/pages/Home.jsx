@@ -1,26 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { SearchBar } from '../components/SearchBar';
 import { ArrowRight, Leaf, Users, Zap, Shield } from 'lucide-react';
-import { products, categories } from '../data/products';
+import { categories } from '../utils/constants';
+import { getFeaturedProducts } from '../services/productService';
 
-// Category-based visual style for feature cards (no images)
-const CATEGORY_STYLES = {
-  'Cosmetics & Personal Care': { gradient: 'from-pink-400 via-rose-400 to-pink-500', icon: '🧴' },
-  'Food Products':             { gradient: 'from-emerald-400 via-green-400 to-teal-500', icon: '🍃' },
-  'Nutrition & Wellness':      { gradient: 'from-blue-400 via-cyan-400 to-blue-500',    icon: '💊' },
-  'Health & Wellness':         { gradient: 'from-teal-400 via-emerald-400 to-green-500', icon: '🌿' },
-};
-const DEFAULT_STYLE = { gradient: 'from-emerald-400 to-green-600', icon: '✨' };
+import { CATEGORY_STYLES, DEFAULT_STYLE } from '../utils/categoryStyles';
 
 export const Home = () => {
   const [searchTerm, setSearchTerm] = React.useState('');
+  const [featuredProducts, setFeaturedProducts] = useState([]);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
   };
 
-  const featuredProducts = products.slice(0, 6);
+  // Load featured products from Firestore on mount
+  useEffect(() => {
+    getFeaturedProducts(6)
+      .then(setFeaturedProducts)
+      .catch((err) => console.error('Failed to load featured products:', err));
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -161,16 +161,15 @@ export const Home = () => {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProducts.map(product => {
+            {featuredProducts.map((product) => {
               const style = CATEGORY_STYLES[product.category] || DEFAULT_STYLE;
               return (
                 <Link
                   key={product.id}
                   to={`/product/${product.id}`}
-                  className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden"
+                  className="group bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
                 >
-                  {/* Feature header — gradient + icon, no image */}
-                  <div className={`h-48 bg-gradient-to-br ${style.gradient} flex flex-col items-center justify-center gap-2 relative`}>
+                  <div className={`relative h-48 bg-gradient-to-br ${style.cardGradient} flex flex-col items-center justify-center gap-2`}>
                     <span className="text-5xl drop-shadow-sm select-none group-hover:scale-110 transition-transform duration-300">{style.icon}</span>
                     <span className="text-white/80 text-xs font-semibold uppercase tracking-widest">{product.category.split(' & ')[0]}</span>
                     <div className="absolute inset-0 opacity-10 pointer-events-none"
