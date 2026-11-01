@@ -16,6 +16,7 @@ export const ProductCard = ({ product, isSaved = false }) => {
 
   const handleSaveProduct = async (e) => {
     e.preventDefault();
+    e.stopPropagation(); // prevent the parent <Link> from navigating
     if (!currentUser) {
       alert('Please login to save products');
       return;

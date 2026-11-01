@@ -16,19 +16,21 @@ const firebaseConfig = {
 
 // Initialize Firebase
 let app;
+let auth;
+let db;
+let storage;
+
 try {
   app = initializeApp(firebaseConfig);
+  // Initialize Firebase Authentication
+  auth = getAuth(app);
+  // Initialize Firestore Database
+  db = getFirestore(app);
+  // Initialize Firebase Storage
+  storage = getStorage(app);
 } catch (error) {
   console.error('Firebase initialization error:', error);
 }
 
-// Initialize Firebase Authentication
-export const auth = getAuth(app);
-
-// Initialize Firestore Database
-export const db = getFirestore(app);
-
-// Initialize Firebase Storage
-export const storage = getStorage(app);
-
+export { auth, db, storage };
 export default app;

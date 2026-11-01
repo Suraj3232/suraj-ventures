@@ -8,7 +8,7 @@ import { getFeaturedProducts } from '../services/productService';
 import { CATEGORY_STYLES, DEFAULT_STYLE } from '../utils/categoryStyles';
 
 export const Home = () => {
-  const [searchTerm, setSearchTerm] = React.useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [featuredProducts, setFeaturedProducts] = useState([]);
 
   const handleSearch = (term) => {

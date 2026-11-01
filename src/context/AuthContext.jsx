@@ -6,7 +6,7 @@ import {
   onAuthStateChanged 
 } from 'firebase/auth';
 import { auth, db } from '../firebase/config';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, serverTimestamp } from 'firebase/firestore';
 
 const AuthContext = createContext(null);
 
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
         name: name,
         email: email,
         role: 'user',
-        createdAt: new Date(),
+        createdAt: serverTimestamp(),
         savedProducts: [],
       });
 
